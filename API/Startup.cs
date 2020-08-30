@@ -38,14 +38,16 @@ namespace API
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                     {
-                        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"); //.AllowAnyOrigin();                
+                        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");    //.AllowAnyOrigin();            
                     });
             });
 
             services.AddMediatR(typeof(List.Handler).Assembly);
 
             //services.AddControllers();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            //Check about it [option => option.EnableEndpointRouting = false]
+            services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +62,8 @@ namespace API
 
             app.UseRouting();
 
+            app.UseCors("CorsPolicy");
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -67,7 +71,8 @@ namespace API
                 endpoints.MapControllers();
             });
 
-            app.UseCors("CorsPolicy");
+
+            app.UseMvc();
         }
     }
 }
